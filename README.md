@@ -6,7 +6,7 @@ Tiny View Plus Practiceは、Tiny View PlusのARマーカを利用したタイ�
 
 ![tinyviewpluspractice](docs/practice.png)
 
-<font color="crimson">ここに記載していない部分は　Tiny View Plus に従います。</font>
+<font color="crimson">ここに記載していない部分は　Tiny View Plus を参照してください。</font>
 
 [https://github.com/t-asano/tinyviewplus](https://github.com/t-asano/tinyviewplus)
 
