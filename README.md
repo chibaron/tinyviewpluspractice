@@ -4,7 +4,7 @@ practice.png
 
 Tiny View Plus Practiceは、Tiny View PlusのARマーカを利用したタイム計測表示を強化した練習会用のアプリです。
 
-![tinyviewpluspractice](docs/practice.jpg)
+![tinyviewpluspractice](docs/practice.png)
 
 <font color="crimson">ここに記載していない部分は　Tiny View Plus に従います。</font>
 
