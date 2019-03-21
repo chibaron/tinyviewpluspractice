@@ -80,7 +80,9 @@ QRコードを使用してパイロット登録を行います。２種類の方
 https://chart.apis.google.com/chart?cht=qr&chld=H|0&chs=288x72&chl=パイロット
 1. 下の画像のようなQRコードでない場合は、一致するまでURLの'chld=H'を書き換えます。
 ![docs/qr.bmp](docs/qr.bmp)
+```
 chld=H → chld=Q → chld=M → chld=L 
+```
 1. QRコード画像(png)を保存します。
 1. BetaFlightConfigratorで電源投入時のスプラッシュ画像をQRコードに変更します。
 OSD→フォントマネージャー(右下ボタン)→カスタム画像を選択→フォントをアップロード
