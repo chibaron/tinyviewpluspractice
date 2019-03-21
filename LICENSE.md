@@ -1,10 +1,10 @@
 # License
 
-Tiny View Plus Practice is distributed under the MIT License. This gives everyone the freedoms to use Tiny View Plus in any context: commercial or non-commercial, public or private, open or closed source.
+Tiny View Plus Practice is distributed under the MIT License. This gives everyone the freedoms to use Tiny View Plus Practice in any context: commercial or non-commercial, public or private, open or closed source.
 
 --
 
-Copyright (c) 2018 t-asano
+Copyright (c) 2019 chibaron
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

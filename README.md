@@ -66,15 +66,32 @@ Tiny View Plus Practiceは、Tiny View PlusのARマーカを利用したタイ�
 | 基準タイム | 基準タイム以下の場合は緑で表示されます。|
 
 
-### QR code reader
 
-QRコードを使用してパイロットの識別を行います。
+## QR code reader
 
-マニュアルでの入力はできません。
+QRコードを使用してパイロット登録を行います。２種類の方法があり、QRコードをBeatflightのスプラッシュ画像と入れ替える方法と、スマホで表示されたQRコードをドローンのカメラで撮影する方法があります。
 
-QRコードをOSDに組み込んでおくと便利です。以下は、Betaflight用のロゴ画像の例です。
+### 1. Betaflight起動時のスプラッシュ画像をQRコードに入れ替え
 
-![docs/qr_betaflight.png](docs/qr_betaflight.png)
+ドローンの電源投入と同時にOSDに表示されたQRコードを読み取り、パイロット登録されます。(BeebrainLiteなど一部のFCではスプラッシュ画像の入れ替えができないことが確認されています)
+
+
+1. 下のURLの最後に記述してある'パイロット'をご自身のパイロットIDに書き換えてQRコードを生成します。
+https://chart.apis.google.com/chart?cht=qr&chld=H|0&chs=288x72&chl=パイロット
+1. 下の画像のようなQRコードでない場合は、一致するまでURLの'chld=H'を書き換えます。
+![docs/qr.bmp](docs/qr.bmp)
+chld=H → chld=Q → chld=M → chld=L 
+1. QRコード画像(png)を保存します。
+1. BetaFlightConfigratorで電源投入時のスプラッシュ画像をQRコードに変更します。
+OSD→フォントマネージャー(右下ボタン)→カスタム画像を選択→フォントをアップロード
+
+
+### 2. スマホで表示されたQRコードをドローンのカメラで撮影
+
+1. 下のURLの最後に記述してある'パイロット'をご自身のパイロットIDに書き換えてスマホで表示させます。
+https://chart.apis.google.com/chart?cht=qr&chld=H&chs=500x500&chl=パイロット
+1. ドローンのカメラでQRコードを撮影します。QRコードがなるべく大きくなるよう、OSDに表示されている文字と重ならないようにしてください。
+
 
 
 

@@ -1,5 +1,9 @@
 # Third Party Licenses
 
+## Tiny View Plus
+
+[https://github.com/t-asano/tinyviewplus/blob/master/LICENSE.md](https://github.com/t-asano/tinyviewplus/blob/master/LICENSE.md)
+
 ## openFrameworks
 
 [http://openframeworks.cc/about/license/](http://openframeworks.cc/about/license/)

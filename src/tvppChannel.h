@@ -15,29 +15,35 @@ struct channelLap {
 };
 
 enum CHANNEL_STATE {
-	WAIT_DEFAULT,
-	WAIT_PILOT,
-	ACTIVE_LAP
+    WAIT_DEFAULT,
+    WAIT_PILOT,
+    ACTIVE_LAP
 };
 
-class tvppChannel {
+class tvppChannel
+{
 public:
-    bool initSet(int idx, int deviceID);
-    bool newSesson(int no, float elapsedTime);
-    ofPixels getImage(void);
-    bool update(float elapsedTime);
-	void draw(float elapsedTime);
-    void window(int iPosX, int iPosY, int iWidth, int iHeight);
+    bool initSet( int idx, int deviceID );
+    bool newSesson( int no, float elapsedTime );
+    ofPixels getImage( void );
+    bool update( float elapsedTime );
+    void draw( float elapsedTime );
+    void window( int iPosX, int iPosY, int iWidth, int iHeight );
 
-	enum CHANNEL_STATE state;
-	int defaultPilotNo;
-	int index;
-	int pilotNo;
-	// AR lap timer
-	ofxAruco aruco;
-	int foundMarkerNum;
+    enum CHANNEL_STATE state;
+    int defaultPilotNo;
+    int index;
+    int pilotNo;
+    ofPixels image;
+    // AR lap timer
+    ofxAruco aruco;
+    int foundMarkerNum;
+    int foundValidMarkerNum;
+    bool enoughValidMarkers;
     float prevElapsedSec;
-	vector<struct channelLap> tvew;
+    vector<struct channelLap> tvew;
+    int flickerCount;
+    int flickerValidCount;
     bool drawImage;
     int drawLapTime;
 
@@ -46,7 +52,7 @@ public:
     int posY;
     int height;
     int width;
-	int chWidth;
+    int chWidth;
     int nameLen;
     int imageX;
     int imageY;
