@@ -540,8 +540,8 @@ void bindCameras()
     vector<ofVideoDevice> devices = grabber.listDevices();
     cameraNum = 0;
     for ( vector<ofVideoDevice>::iterator it = devices.begin(); it != devices.end(); ++it ) {
-//        if (regex_search(it->deviceName, regex("USB2.0 PC CAMERA")) == true
-//            || regex_search(it->deviceName, regex("GV-USB2")) == true) {
+        if (regex_search(it->deviceName, regex("USB2.0 PC CAMERA")) == true
+            || regex_search(it->deviceName, regex("GV-USB2")) == true) {
             if ( cameraNum < CAMERA_MAXNUM ) {
                 if ( channel[cameraNum].initSet( cameraNum, it->id ) ) {
                     pilotNextSession( pilotAdd( "Pilot" + ofToString( cameraNum + 1 ) ) );
@@ -551,7 +551,7 @@ void bindCameras()
             if ( cameraNum == CAMERA_MAXNUM ) {
                 break;
             }
-//        }
+        }
     }
     if ( cameraNum == 0 ) {
         ofSystemAlertDialog( "no FPV receiver detected" );
