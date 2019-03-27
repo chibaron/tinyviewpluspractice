@@ -3,29 +3,23 @@
 #include "tvppPilot.h"
 
 
-struct timeView {
-    string time;
-    float lapTime;
-    int lapCount;
-    int sessonCount;
-};
 
 class pilot
 {
 public:
     pilot( string strPilotName );
-    bool lapCount( float laptime );
+    void newLapCount(struct lap *lap);
     void nextSession( void );
+    float bestLap( void );
     float best3Lap( void );
 
     string name;
-    vector<struct timeView> allLaps;
+	vector<struct lap*> allLaps;
+	int lapCount;
     int sessonCount;
     int sessonLapCount;
-    float bestLap;
-    int bestLapNo;
-    float best3lap;
-    int best3LapNo;
+	int bestLapIndex;
+	int best3LapIndex;
 };
 vector<class pilot> pilots;
 vector<class pilot> tmpList;
@@ -34,43 +28,46 @@ vector<class pilot> tmpList;
 pilot::pilot( string strPilotName )
 {
     name = strPilotName;
-    bestLap = 999.99;
-    best3lap = 999.99;
-    bestLapNo = 0;
-    best3LapNo = 0;
+        lapCount = 0;
     sessonCount = 1;
     sessonLapCount = 0;
+    bestLapIndex = -1;
+    best3LapIndex = -1;
 }
 
 /////////////////////////////////////////////////////////////
-bool pilot::lapCount( float laptime )
+void pilot::newLapCount(struct lap *lap)
 {
-    bool newbest = false;
-
-    timeView tv;
-    tv.time = ofGetTimestampString( "%H:%M:%S" );
-    tv.lapTime = laptime;
-    tv.lapCount = ++sessonLapCount;
-    tv.sessonCount = sessonCount;
-    allLaps.push_back( tv );
+    lap->lapCount = ++lapCount;
+    lap->sessonLapCount = ++sessonLapCount;
+    lap->sessonCount = sessonCount;
+    allLaps.push_back(lap);
     // bestlap
-    if ( bestLap > laptime ) {
-        bestLap = laptime;
-        bestLapNo = allLaps.size();
-        newbest = true;
+    if (bestLap() > allLaps[allLaps.size()-1]->lapTime){
+        if (bestLapIndex >= 0){
+            allLaps[bestLapIndex]->bestLapf = false;
+        }
+        bestLapIndex = allLaps.size() - 1;
+        allLaps[bestLapIndex]->bestLapf = true;
     }
     // best3lap
     if ( allLaps.size() >= 3 ) {
         int idx = allLaps.size() - 3;
-        if ( ( allLaps[idx].sessonCount == allLaps[idx + 1].sessonCount ) && ( allLaps[idx].sessonCount == allLaps[idx + 2].sessonCount ) ) {
-            float lap = allLaps[idx].lapTime + allLaps[idx + 1].lapTime + allLaps[idx + 2].lapTime;
-            if ( best3Lap() > lap ) {
-                best3lap = lap;
-                best3LapNo = idx + 1;
+        if ((allLaps[idx]->sessonCount == allLaps[idx+1]->sessonCount) && (allLaps[idx]->sessonCount == allLaps[idx+2]->sessonCount)) {
+            float tmplap = allLaps[idx]->lapTime + allLaps[idx+1]->lapTime + allLaps[idx+2]->lapTime;
+            if ( best3Lap() > tmplap ){
+                if ( best3LapIndex >= 0 ){
+                    allLaps[best3LapIndex]->best3Lapf = false;
+                    allLaps[best3LapIndex+1]->best3Lapf = false;
+                    allLaps[best3LapIndex+2]->best3Lapf = false;
+                }
+                best3LapIndex = idx;
+                allLaps[best3LapIndex]->best3Lapf = true;
+                allLaps[best3LapIndex+1]->best3Lapf = true;
+                allLaps[best3LapIndex+2]->best3Lapf = true;
             }
         }
     }
-    return newbest;
 }
 
 /////////////////////////////////////////////////////////////
@@ -83,15 +80,25 @@ void pilot::nextSession( void )
 }
 
 /////////////////////////////////////////////////////////////
-float pilot::best3Lap( void )
-{
-    return best3lap;
+float pilot::bestLap(void){
+    if (bestLapIndex < 0){
+        return 999.99;
+    }
+    return allLaps[bestLapIndex]->lapTime;
+}
+
+/////////////////////////////////////////////////////////////
+float pilot::best3Lap(void){
+        if (best3LapIndex < 0){
+            return 999.99;
+        }
+        return allLaps[best3LapIndex]->lapTime + allLaps[best3LapIndex+1]->lapTime + allLaps[best3LapIndex+2]->lapTime;
 }
 
 /////////////////////////////////////////////////////////////
 bool compareBestLap( pilot& left, pilot& right )
 {
-    return left.bestLap < right.bestLap ;
+    return left.bestLap() < right.bestLap();
 }
 
 /////////////////////////////////////////////////////////////
@@ -103,9 +110,9 @@ bool compareBest3Lap( pilot& left, pilot& right )
 
 
 /////////////////////////////////////////////////////////////
-bool pilotLapCount( int pilotNo, float laptime )
+void pilotLapCount(int pilotNo, struct lap *lap)
 {
-    return pilots[pilotNo].lapCount( laptime );
+    pilots[pilotNo].newLapCount(lap);
 }
 
 /////////////////////////////////////////////////////////////
@@ -158,7 +165,7 @@ string pilotGetName( int pilotNo )
 /////////////////////////////////////////////////////////////
 float pilotGetBestLap( int pilotNo )
 {
-    return pilots[pilotNo].bestLap;
+	return pilots[pilotNo].bestLap();
 }
 
 /////////////////////////////////////////////////////////////
@@ -190,13 +197,16 @@ string pilotGetListName( int index )
 /////////////////////////////////////////////////////////////
 float pilotGetListLap( int index )
 {
-    return tmpList[index].bestLap;
+	return tmpList[index].bestLap();
 }
 
 /////////////////////////////////////////////////////////////
 int pilotGetListLapNo( int index )
 {
-    return tmpList[index].bestLapNo;
+    if (tmpList[index].bestLapIndex < 0){
+        return 0;
+    }
+    return tmpList[index].bestLapIndex+1;
 }
 
 
@@ -209,7 +219,10 @@ float pilotGetList3Lap( int index )
 /////////////////////////////////////////////////////////////
 int pilotGetList3LapNo( int index )
 {
-    return tmpList[index].best3LapNo;
+    if (tmpList[index].best3LapIndex < 0){
+        return 0;
+    }
+    return tmpList[index].best3LapIndex+1;
 }
 
 /////////////////////////////////////////////////////////////
@@ -219,16 +232,9 @@ int pilotGetAllLapSize( int pilotNo )
 }
 
 /////////////////////////////////////////////////////////////
-pilotLapTime pilotGetAllLap( int pilotNo, int index )
+struct lap *pilotGetAllLap( int pilotNo, int index )
 {
-    pilotLapTime lap;
-    lap.time = pilots[pilotNo].allLaps[index].time;
-    lap.lapTime = pilots[pilotNo].allLaps[index].lapTime;
-    lap.lapCount = pilots[pilotNo].allLaps[index].lapCount;
-    lap.sessonCount = pilots[pilotNo].allLaps[index].sessonCount;
-    lap.bestLap = ( pilots[pilotNo].allLaps[index].lapTime == pilots[pilotNo].bestLap );
-    lap.best3Lap = ( pilots[pilotNo].best3LapNo <= (index+1) ) && ( ( pilots[pilotNo].best3LapNo + 2 ) >= (index+1) );
-    return lap;
+    return pilots[pilotNo].allLaps[index];
 }
 
 

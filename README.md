@@ -73,14 +73,18 @@ QRコードを使用してパイロット登録を行います。２種類の方
 
 ### 1. Betaflight起動時のスプラッシュ画像をQRコードに入れ替え
 
-ドローンの電源投入と同時にOSDに表示されたQRコードを読み取り、パイロット登録されます。(BeebrainLiteなど一部のFCではスプラッシュ画像の入れ替えができないことが確認されています)
+1. 下のURLを参考にQRコードを生成します。
 
-
-1. 下のURLの最後に記述してある'パイロット'をご自身のパイロットIDに書き換えてQRコードを生成します。
-https://chart.apis.google.com/chart?cht=qr&chld=H|0&chs=288x72&chl=パイロット
-1. 下の画像のようなQRコードでない場合は、一致するまでURLの'chld=H'を 'chld=H'→'chld=Q'→'chld=M'→'chld=L' と書き換えます。
-![docs/qr.bmp](docs/qr.bmp)
-![docs/qr_ng.bmp](docs/qr_ng.bmp)
+    https://chart.apis.google.com/chart?cht=qr&chld=H|0&chs=288x72&chl=パイロット
+    - URL内の'パイロット'をご自身のパイロットIDに書き換えます
+    - URL内の'chid=H'の部分はパイロットIDの文字の種類と数により書き換えます。
+        
+    | URL | 英数字のみ| 英数字と記号 | 英字と記号と漢字 |
+    | -------- | -------- | -------- | -------- |
+    | chld=H | 8文字 | 6文字 | 2文字 |
+    | chld=Q | 14文字 | 10文字 | 3文字 |
+    | chld=M | 18文字 | 13文字 | 4文字 |
+    | chld=L | 23文字 | 16文字 | 5文字 |
 1. QRコード画像(png)を保存します。
 1. BetaFlightConfigratorで電源投入時のスプラッシュ画像をQRコードに変更します。
 OSD→フォントマネージャー(右下ボタン)→カスタム画像を選択→フォントをアップロード

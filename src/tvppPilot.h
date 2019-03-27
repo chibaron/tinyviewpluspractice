@@ -2,6 +2,7 @@
 
 #include <regex>
 #include "ofMain.h"
+#include "tvppLap.h"
 
 enum LAPS {
     LAP_NONE,
@@ -9,16 +10,8 @@ enum LAPS {
     LAP_BEST3
 };
 
-struct pilotLapTime {
-    string time;
-    float lapTime;
-    int lapCount;
-    int sessonCount;
-    bool bestLap;
-    bool best3Lap;
-};
 
-bool pilotLapCount( int pilotNo, float laptime );
+void pilotLapCount(int pilotNo, struct lap*);
 int pilotSearch( string name );
 int pilotAdd( string name );
 void pilotNextSession( int pilotNo );
@@ -35,5 +28,5 @@ int pilotGetListLapNo( int index );
 float pilotGetList3Lap( int index );
 int pilotGetList3LapNo( int index );
 int pilotGetAllLapSize( int pilotNo );
-pilotLapTime pilotGetAllLap( int pilotNo, int index );
+struct lap *pilotGetAllLap( int pilotNo, int index );
 

@@ -323,23 +323,23 @@ void drawPilotResult()
 
     if( pilotGetAllLapSize( pilotResultNo ) > 0 ) {
         for( int line = 0; line < bestLapLineMax && idx >= 0; line++ ) {
-            pilotLapTime tv = pilotGetAllLap( pilotResultNo, idx );
+            struct lap *lap = pilotGetAllLap( pilotResultNo, idx );
             std::stringstream strIndex, strLapTime;
-            strIndex << tv.time;
+            strIndex << lap->time;
             strIndex << " ";
-            strIndex << std::setw( 2 ) << std::setfill( ' ' ) << tv.sessonCount;
+            strIndex << std::setw( 2 ) << std::setfill( ' ' ) << lap->sessonCount;
             strIndex << "-";
-            strIndex << std::setw( 2 ) << std::setfill( ' ' ) << tv.lapCount;
+            strIndex << std::setw( 2 ) << std::setfill( ' ' ) << lap->sessonLapCount;
             strIndex << " ";
-            strIndex << std::setw( 3 ) << std::setfill( ' ' ) << idx + 1;
-            strLapTime << std::setw( 5 ) << std::setfill( ' ' ) << std::fixed << setprecision( 2 ) << tv.lapTime;
+            strIndex << std::setw( 3 ) << std::setfill( ' ' ) << lap->lapCount;
+            strLapTime << std::setw( 5 ) << std::setfill( ' ' ) << std::fixed << setprecision( 2 ) << lap->lapTime;
             ofSetColor( 255, 255, 255 );
             myFontLap.drawString( strIndex.str(), commonPosX + pilotResultIndexX, pilotResultIndexY + LAP_STEP * ( line + 1 ) );
-            if ( tv.bestLap ) {
+            if ( lap->bestLapf ) {
                 ofSetColor( COLOR_BEST );
-            } else if ( tv.best3Lap ) {
+            } else if ( lap->best3Lapf ) {
                 ofSetColor( COLOR_BEST3 );
-            } else if ( tv.lapTime < setLapTime ) {
+            } else if ( lap->lapTime < setLapTime ) {
                 ofSetColor( COLOR_LAP_GREEN );
             }
             myFontLap.drawString( strLapTime.str(), commonPosX + pilotResultTimeX, pilotResultTimeY + LAP_STEP * ( line + 1 ) );
@@ -540,8 +540,8 @@ void bindCameras()
     vector<ofVideoDevice> devices = grabber.listDevices();
     cameraNum = 0;
     for ( vector<ofVideoDevice>::iterator it = devices.begin(); it != devices.end(); ++it ) {
-        if (regex_search(it->deviceName, regex("USB2.0 PC CAMERA")) == true
-            || regex_search(it->deviceName, regex("GV-USB2")) == true) {
+//        if (regex_search(it->deviceName, regex("USB2.0 PC CAMERA")) == true
+//            || regex_search(it->deviceName, regex("GV-USB2")) == true) {
             if ( cameraNum < CAMERA_MAXNUM ) {
                 if ( channel[cameraNum].initSet( cameraNum, it->id ) ) {
                     pilotNextSession( pilotAdd( "Pilot" + ofToString( cameraNum + 1 ) ) );
@@ -551,7 +551,7 @@ void bindCameras()
             if ( cameraNum == CAMERA_MAXNUM ) {
                 break;
             }
-        }
+//        }
     }
     if ( cameraNum == 0 ) {
         ofSystemAlertDialog( "no FPV receiver detected" );

@@ -8,12 +8,6 @@
 #define CAMERA_WIDTH    640
 #define CAMERA_HEIGHT   480
 
-struct channelLap {
-    int pilotNo;
-    float lapTime;
-    int lapCount;
-};
-
 enum CHANNEL_STATE {
     WAIT_DEFAULT,
     WAIT_PILOT,
@@ -41,7 +35,7 @@ public:
     int foundValidMarkerNum;
     bool enoughValidMarkers;
     float prevElapsedSec;
-    vector<struct channelLap> tvew;
+    vector<struct lap*> tvew;
     int flickerCount;
     int flickerValidCount;
     bool drawImage;

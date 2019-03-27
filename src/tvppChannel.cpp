@@ -8,9 +8,10 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
-#endif /* TARGET_WIN32 */
+#endif /* TARGET_WIN32 */   
 
 #include "tvppSpeech.h"
+#include "tvppLap.h"
 #include "tvppPilot.h"
 #include "tvppChannel.h"
 
@@ -23,6 +24,7 @@ extern int setLapTime;
 extern int sessonTimeout;
 
 
+struct lap dummyLap = {0};
 
 /////////////////// tvppChannel //////////////////////////////////
 
@@ -41,9 +43,6 @@ bool tvppChannel::initSet( int idx, int deviceID )
     aruco.setUseHighlyReliableMarker( ARAP_MKR_FILE );
     aruco.setThreaded( true );
     aruco.setup2d( CAMERA_WIDTH, CAMERA_HEIGHT );
-    struct channelLap tv = channelLap();
-    tv.pilotNo = defaultPilotNo;
-    tvew.push_back( tv );
     drawLapTime = 5;
 }
 
@@ -59,11 +58,13 @@ bool tvppChannel::newSesson( int no, float elapsedTime )
         state = WAIT_PILOT;
     }
     prevElapsedSec = elapsedTime;
-    if ( tvew[tvew.size() - 1].lapTime != 0 ) {
-        struct channelLap tv = channelLap();
-        tvew.push_back( tv );
-        drawLapTime = 5;
-    }
+	if (tvew.size() > 0) {
+		if (tvew[tvew.size() - 1]->lapTime != 0) {
+			//        struct lap *lap = &dummyLap;
+			tvew.push_back(&dummyLap);
+			drawLapTime = 5;
+		}
+	}
     return true;
 }
 
@@ -117,20 +118,18 @@ bool tvppChannel::update( float elapsedTime )
             if ( state == ACTIVE_LAP ) {
                 float lapTime = min( round( ( elapsedTime - prevElapsedSec ) * 100 ) / 100, 999.99f );
                 if ( lapTime >= minLapTime ) {
-                    float lapTime = min( round( ( elapsedTime - prevElapsedSec ) * 100 ) / 100, 999.99f );
-                    bool newbest = pilotLapCount( pilotNo, lapTime );
-                    class channelLap tv = channelLap();
-                    tv.pilotNo = pilotNo;
-                    tv.lapTime = lapTime;
-                    tv.lapCount = pilotGetSessonLapCount( pilotNo );
-                    tvew.push_back( tv );
-                    while( tvew.size() > 100 ) {
+                    struct lap *lap = newLap();
+                    lap->lapTime = lapTime;
+                    lap->pilotNo = pilotNo;
+                    pilotLapCount(pilotNo, lap);
+                    tvew.push_back(lap);
+                     while( tvew.size() > 100 ) {
                         tvew.erase( tvew.begin() );
                     }
                     speakFunc( LAP_TIME, pilotGetName( pilotNo ), lapTime );
-                    if ( newbest ) {
+                    if ( lap->bestLapf ) {
                         bestSound.play();
-                    } else if ( lapTime < setLapTime ) {
+                    } else if ( lap->lapTime < setLapTime ) {
                         setSound.play();
                     } else {
                         beepSound.play();
@@ -172,14 +171,16 @@ void tvppChannel::draw( float elapsedTime )
             int line = 0;
             for( auto itr = tvew.rbegin(); itr != tvew.rend(); ++itr ) {
                 std::stringstream strPilot , strLapTime;
-                if ( itr->lapTime ) {
-                    strLapTime << std::setw( 5 ) << std::setfill( ' ' ) << std::fixed << setprecision( 2 ) << itr->lapTime;
-                    strPilot << pilotGetName( itr->pilotNo ).substr( 0, nameLen ) << "(" << itr->lapCount << ")";
+                if ( (*itr)->lapTime ) {
+                    strLapTime << std::setw( 5 ) << std::setfill( ' ' ) << std::fixed << setprecision( 2 ) << (*itr)->lapTime;
+                    strPilot << pilotGetName((*itr)->pilotNo ).substr( 0, nameLen ) << "(" << (*itr)->sessonLapCount << ")";
                     ofSetColor( 255, 255, 255 );
                     myFontLap.drawString( strPilot.str(), lapNameX, lapNameY + LAP_STEP * ( line + 1 ) );
-                    if ( itr->lapTime == pilotGetBestLap( itr->pilotNo ) ) {
+                    if ( (*itr)->bestLapf ) {
                         ofSetColor( COLOR_BEST );
-                    } else if ( itr->lapTime < setLapTime ) {
+                    } else if ( (*itr)->best3Lapf ) {
+                        ofSetColor( COLOR_BEST3 );
+                    } else if ((*itr)->lapTime < setLapTime ) {
                         ofSetColor( COLOR_LAP_GREEN );
                     }
                     myFontLap.drawString( strLapTime.str(), lapTimeX, lapTimeY + LAP_STEP * ( line + 1 ) );
@@ -205,9 +206,6 @@ void tvppChannel::draw( float elapsedTime )
         ofSetLineWidth(3);
         aruco.draw2dGate(ofColor(COLOR_YELLOW), ofColor(COLOR_ALERT), false);
         ofPopMatrix();
-
-
-
         ofSetColor( COLOR_YELLOW );
         // pilot
         myFontLabel.drawString( pilotGetName( pilotNo ), imageNameX, imageNameY );
