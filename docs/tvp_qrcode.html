@@ -1,0 +1,55 @@
+<script>
+function url() {
+  var st = encodeURIComponent(document.F1.PILOTNAME.value);
+  var nst = st.replace(/\%../g, "x");
+  if(nst.length < 7){
+    var chld = "H";
+  }else if (nst.length < 10){
+    var chld = "Q";
+  }else if (nst.length < 13){
+    var chld = "M";
+  }else if (nst.length < 16){
+    var chld = "L";
+  }else {
+    var chld = "";
+  }
+  if (chld.length){
+    document.getElementById("qrLinkBf").href = "https://chart.apis.google.com/chart?cht=qr&chld=" + chld + "|0&chs=288x72&chl=" + st;
+    document.getElementById("qrLinkBf").innerText = "Betaflight埋め込み用スプラッシュ画像(for Betaflight image)";
+  }else{
+    document.getElementById("qrLinkBf").href = "";
+    document.getElementById("qrLinkBf").innerText = "パイロット名が長すぎます(pilot name is too long)";
+  }
+  document.getElementById("qrLinkImg").href = "https://chart.apis.google.com/chart?cht=qr&chld=H&chs=500x500&chl=" + st;
+  document.getElementById("qrLinkImg").innerText = "スマートフォン用画像(for Smartphone image)";
+  document.getElementById("encodeText").innerHTML = "Debug Text:" + st;
+  document.getElementById("encodeTextLength").innerHTML = "Debug TextLength:" + st.length;
+  document.getElementById("convText").innerHTML = "Debug ConvText:" + nst;
+  document.getElementById("convTextLength").innerHTML = "Debug ConvTextLength:" + nst.length;
+}
+</script>
+
+<head>
+<title>QR Code Generate</title>
+</head>
+
+<form name="F1" action="#">
+PilotName:
+<input type="text" name="PILOTNAME">
+<input type="button" value="Generate" onclick="url()">
+<br>
+</form>
+<br>
+<a id="qrLinkBf" href=""></a>
+<br>
+<br>
+<a id="qrLinkImg" href=""></a>
+<br>
+<br>
+<br>
+<hr>
+<div id="encodeText"></div>
+<div id="encodeTextLength"></div>
+<div id="convText"></div>
+<div id="convTextLength"></div>
+
